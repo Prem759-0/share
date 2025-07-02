@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Send Anywhere Clone - Secure File Transfer</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Dropzone CSS -->
+    <link href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
+</head>
+<body>
+    <!-- Header Section -->
+    <header class="main-header">
+        <div class="container-fluid">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <h1 class="logo">
+                        <i class="fas fa-paper-plane me-2"></i>
+                        Send Anywhere Clone
+                    </h1>
+                    <p class="tagline">Secure, encrypted file sharing that auto-deletes</p>
+                </div>
+                <div class="col-md-6 text-end">
+                    <div class="security-badges">
+                        <span class="badge bg-success">
+                            <i class="fas fa-shield-alt me-1"></i>Encrypted
+                        </span>
+                        <span class="badge bg-warning">
+                            <i class="fas fa-clock me-1"></i>Temporary
+                        </span>
+                        <span class="badge bg-info">
+                            <i class="fas fa-user-secret me-1"></i>Anonymous
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container-fluid main-content">
+        <div class="row h-100">
+            <!-- Upload Section -->
+            <div class="col-lg-6 upload-section">
+                <div class="section-content">
+                    <div class="section-header">
+                        <h2><i class="fas fa-upload me-2"></i>Send</h2>
+                        <p class="text-muted">Upload files to share securely</p>
+                        <div class="status-indicator secure">
+                            <i class="fas fa-shield-alt me-1"></i>AES-256 Encrypted
+                        </div>
+                        <div class="status-indicator temporary">
+                            <i class="fas fa-clock me-1"></i>10 Min Auto-Delete
+                        </div>
+                    </div>
+                    
+                    <!-- Upload Instructions -->
+                    <div class="upload-instructions">
+                        <h5><i class="fas fa-info-circle me-2"></i>How to Send Files</h5>
+                        <ul>
+                            <li>Drag & drop files or click to browse</li>
+                            <li>Files are encrypted before upload</li>
+                            <li>Get a 6-digit code to share</li>
+                            <li>Files auto-delete after 10 minutes</li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Upload Area -->
+                    <div class="upload-area" id="upload-area">
+                        <div class="dropzone-content">
+                            <i class="fas fa-cloud-upload-alt upload-icon pulse"></i>
+                            <h4>Drop files here or click to browse</h4>
+                            <p>Maximum file size: 2GB</p>
+                            <div class="feature-highlight">
+                                <i class="fas fa-magic"></i>
+                                Drag & drop files for instant upload
+                            </div>
+                            <button type="button" class="btn btn-primary" id="browse-button">
+                                <i class="fas fa-folder-open me-2"></i>Browse Files
+                            </button>
+                        </div>
+                        <input type="file" id="file-input" style="display: none;" multiple>
+                    </div>
+                    
+                    <!-- Upload Progress -->
+                    <div class="upload-progress d-none" id="upload-progress">
+                        <h4><i class="fas fa-upload me-2"></i>Uploading & Encrypting<span class="loading-dots"></span></h4>
+                        <div class="progress mb-3">
+                            <div class="progress-bar" role="progressbar" style="width: 0%"></div>
+                        </div>
+                        <div class="upload-stats">
+                            <span class="upload-speed"></span>
+                            <span class="upload-eta"></span>
+                        </div>
+                        <div class="feature-highlight">
+                            <i class="fas fa-lock"></i>
+                            Your file is being encrypted with AES-256
+                        </div>
+                    </div>
+                    
+                    <!-- Upload Success -->
+                    <div class="upload-success d-none" id="upload-success">
+                        <div class="code-display">
+                            <h3>Your Transfer Code</h3>
+                            <div class="transfer-code" id="transfer-code"></div>
+                            <button class="btn btn-outline-primary" id="copy-code-btn">
+                                <i class="fas fa-copy me-2"></i>Copy Code
+                            </button>
+                        </div>
+                        
+                        <div class="transfer-info">
+                            <div class="countdown-timer">
+                                <i class="fas fa-clock me-2"></i>
+                                <span>Expires in: </span>
+                                <span class="timer" id="countdown-timer">10:00</span>
+                            </div>
+                            <div class="file-info">
+                                <span class="filename" id="uploaded-filename"></span>
+                                <span class="filesize" id="uploaded-filesize"></span>
+                            </div>
+                        </div>
+                        
+                        <div class="qr-code-section">
+                            <h5>QR Code for Mobile</h5>
+                            <div class="qr-code" id="qr-code"></div>
+                        </div>
+                        
+                        <button class="btn btn-success" id="upload-another">
+                            <i class="fas fa-plus me-2"></i>Upload Another File
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Download Section -->
+            <div class="col-lg-6 download-section">
+                <div class="section-content">
+                    <div class="section-header">
+                        <h2><i class="fas fa-download me-2"></i>Receive</h2>
+                        <p class="text-muted">Enter code to download files</p>
+                        <div class="status-indicator encrypted">
+                            <i class="fas fa-key me-1"></i>6-Digit Code Required
+                        </div>
+                    </div>
+                    
+                    <!-- Download Instructions -->
+                    <div class="download-instructions">
+                        <h5><i class="fas fa-info-circle me-2"></i>How to Receive Files</h5>
+                        <ul>
+                            <li>Enter the 6-digit code from sender</li>
+                            <li>Preview file details before download</li>
+                            <li>One-time download only</li>
+                            <li>Files expire after 10 minutes</li>
+                        </ul>
+                    </div>
+                    
+                    {% if download_info %}
+                    <!-- Download Preview -->
+                    <div class="download-preview">
+                        <div class="file-preview">
+                            <i class="fas fa-file file-icon"></i>
+                            <div class="file-details">
+                                <h4>{{ download_info.filename }}</h4>
+                                <p>{{ (download_info.file_size / 1024 / 1024) | round(2) }} MB</p>
+                            </div>
+                        </div>
+                        <a href="{{ url_for('download_file', code=download_info.code) }}" 
+                           class="btn btn-success btn-lg download-btn">
+                            <i class="fas fa-download me-2"></i>Download File
+                        </a>
+                    </div>
+                    {% else %}
+                    <!-- Code Input -->
+                    <div class="code-input-section" id="code-input-section">
+                        <div class="numeric-keypad">
+                            <div class="feature-highlight download-feature">
+                                <i class="fas fa-keyboard"></i>
+                                Use keypad below or your keyboard
+                            </div>
+                            <div class="code-display-input">
+                                <input type="text" class="form-control code-input" id="code-input" 
+                                       placeholder="000000" maxlength="6" readonly>
+                                <div class="help-tooltip">
+                                    <i class="fas fa-question-circle"></i>
+                                    <span class="tooltip-text">Enter the 6-digit code you received from the sender</span>
+                                </div>
+                            </div>
+                            
+                            <div class="keypad">
+                                <div class="row g-2">
+                                    <div class="col-4">
+                                        <button class="btn btn-outline-primary keypad-btn" data-digit="1">1</button>
+                                    </div>
+                                    <div class="col-4">
+                                        <button class="btn btn-outline-primary keypad-btn" data-digit="2">2</button>
+                                    </div>
+                                    <div class="col-4">
+                                        <button class="btn btn-outline-primary keypad-btn" data-digit="3">3</button>
+                                    </div>
+                                    <div class="col-4">
+                                        <button class="btn btn-outline-primary keypad-btn" data-digit="4">4</button>
+                                    </div>
+                                    <div class="col-4">
+                                        <button class="btn btn-outline-primary keypad-btn" data-digit="5">5</button>
+                                    </div>
+                                    <div class="col-4">
+                                        <button class="btn btn-outline-primary keypad-btn" data-digit="6">6</button>
+                                    </div>
+                                    <div class="col-4">
+                                        <button class="btn btn-outline-primary keypad-btn" data-digit="7">7</button>
+                                    </div>
+                                    <div class="col-4">
+                                        <button class="btn btn-outline-primary keypad-btn" data-digit="8">8</button>
+                                    </div>
+                                    <div class="col-4">
+                                        <button class="btn btn-outline-primary keypad-btn" data-digit="9">9</button>
+                                    </div>
+                                    <div class="col-4">
+                                        <button class="btn btn-outline-secondary keypad-btn" id="clear-btn">
+                                            <i class="fas fa-backspace"></i>
+                                        </button>
+                                    </div>
+                                    <div class="col-4">
+                                        <button class="btn btn-outline-primary keypad-btn" data-digit="0">0</button>
+                                    </div>
+                                    <div class="col-4">
+                                        <button class="btn btn-success keypad-btn" id="submit-code">
+                                            <i class="fas fa-arrow-right"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Download Preview (Hidden by default) -->
+                    <div class="download-preview d-none" id="download-preview">
+                        <div class="file-preview">
+                            <i class="fas fa-file file-icon"></i>
+                            <div class="file-details">
+                                <h4 id="preview-filename"></h4>
+                                <p id="preview-filesize"></p>
+                            </div>
+                        </div>
+                        <button class="btn btn-success btn-lg download-btn" id="download-file-btn">
+                            <i class="fas fa-download me-2"></i>Download File
+                        </button>
+                        <button class="btn btn-outline-secondary" id="back-to-input">
+                            <i class="fas fa-arrow-left me-2"></i>Back
+                        </button>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Footer Section -->
+    <footer class="main-footer">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-6">
+                    <p class="footer-text">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Files are automatically deleted after 10 minutes or first download
+                    </p>
+                </div>
+                <div class="col-md-6 text-end">
+                    <div class="tech-stack">
+                        <span class="tech-badge">
+                            <i class="fas fa-code me-1"></i>Flask
+                        </span>
+                        <span class="tech-badge">
+                            <i class="fas fa-lock me-1"></i>AES-256
+                        </span>
+                        <span class="tech-badge">
+                            <i class="fas fa-database me-1"></i>PostgreSQL
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- Error/Success Toast -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="toast" class="toast" role="alert">
+            <div class="toast-header">
+                <strong class="me-auto" id="toast-title">Notification</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+            </div>
+            <div class="toast-body" id="toast-body"></div>
+        </div>
+    </div>
+    
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    
+    {% if error %}
+    <script>
+        showToast('Error', '{{ error }}', 'error');
+    </script>
+    {% endif %}
+</body>
+</html>
