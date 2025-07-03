@@ -1,0 +1,101 @@
+Here's a precise Replit AI prompt to create a Send Anywhere clone:
+
+```prompt
+Create a Flask web application that mimics https://send-anywhere.com functionality with these exact features:
+
+1. **File Upload System**
+- Drag-and-drop interface (using Dropzone.js)
+- File encryption (AES-256) before storage
+- Progress bar with upload speed/ETA
+- Auto-generation of 6-digit numeric codes upon upload completion
+- 10-minute countdown timer displayed with code
+
+2. **Download System**
+- Numeric keypad for code input (auto-submits at 6 digits)
+- File preview with name/type/size before download
+- "Download All" button for multiple files
+- One-click direct download initiation
+- QR code generator for sharing
+
+3. **Backend Requirements**
+- SQLite database storing:
+  - Encrypted filenames
+  - Hashed 6-digit codes
+  - Expiration timestamps (10 minutes)
+  - Download status
+- Automatic file deletion:
+  - After first download
+  - After expiration (cron job every 5 minutes)
+- Max 2GB file size limit
+
+4. **Security Features**
+- End-to-end encryption (PyCryptodome)
+- HTTPS enforcement
+- Rate limiting (3 attempts per code)
+- Sanitized filename handling
+
+5. **User Interface**
+- Split-screen design (upload left/download right)
+- Responsive Bootstrap layout
+- Real-time countdown timers
+- Copy-to-clipboard button for codes
+- QR code display panel
+- Error alerts for:
+  - Invalid/expired codes
+  - Download attempts
+  - File size exceedance
+
+6. **Required Routes**
+- `/` (homepage with dual interface)
+- `/upload` (file processing endpoint)
+- `/download/<code>` (file retrieval)
+- `/cleanup` (expired file deletion)
+
+7. **Third-Party Libraries**
+- Flask
+- Flask-Limiter
+- PyCryptodome
+- qrcode
+- Dropzone.js
+- Bootstrap 5
+
+8. **Prohibited**
+- User accounts
+- Permanent file storage
+- Download history
+- Browser extensions
+
+Validation Requirements:
+- Files inaccessible without exact code
+- Codes expire precisely at 00:00 timer
+- Single download per file
+- Auto-deletion within 5min of expiry
+
+Output: Complete working Flask application in a single Replit project. Prioritize security and one-time transfers over advanced features.
+```
+
+Key implementation notes for Replit:
+1. Use `/tmp` storage for auto-cleaning files
+2. Implement `background_scheduler` for cleanup tasks
+3. Add rate limiting to prevent brute-force attacks
+4. Include mobile-responsive QR codes
+5. Use client-side JS for:
+   - Drag-and-drop uploads
+   - Countdown timers
+   - QR code generation
+   - Numeric keypad input
+
+The AI will generate:
+- Core Flask backend
+- Database schema
+- HTML/CSS templates
+- JavaScript interactions
+- Security handlers
+- File management system
+
+Test cases to verify:
+1. File upload → code generation → download within 10 min
+2. Download failure after code expiry
+3. Single successful download per code
+4. Auto-deletion of expired files
+5. QR code mobile download test
